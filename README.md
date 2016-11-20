@@ -1,5 +1,4 @@
-# TecademyCode
-
+```
 import pygame, random
 from time import sleep
 from gpiozero import Motor, RGBLED
@@ -117,3 +116,5 @@ for i in range(10):
         correct()
     else:
         incorrect()
+
+```

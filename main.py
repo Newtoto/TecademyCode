@@ -1,4 +1,3 @@
-```
 import pygame, random
 from time import sleep
 from gpiozero import Motor, RGBLED
@@ -14,6 +13,9 @@ total = 0
 screenDims = (800, 600)
 WHITE = (255,255,255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+colour = BLACK
 totalMessage = ""
 
 motorA = Motor(7, 8)
@@ -27,7 +29,7 @@ def correct():
     os.system("mpg321 /home/pi/Desktop/cheer.mp3 -q &")
     led.color = (rCorrect, gCorrect, bCorrect)
     motorA.forward()
-    sleep(2)
+    sleep(1)
     motorA.stop()
     led.off()
     return
@@ -36,7 +38,7 @@ def incorrect():
     os.system("mpg321 /home/pi/Desktop/incorrect.mp3 -q &")
     led.color = (rIncorrect, gIncorrect, bIncorrect)
     motorA.backward()
-    sleep(2)
+    sleep(1)
     motorA.stop()
     led.off()
     return
@@ -53,8 +55,8 @@ def message_display(text, x, y):
     screen.blit(TextSurf, TextRect)
     pygame.display.flip()
 
-def display_messages():
-    screen.fill(BLACK)
+def display_messages(colour):
+    screen.fill(colour)
     message_display(teststring, screenDims[0]/2, screenDims[1]/2 - 100)
     message_display(playerans, screenDims[0]/2, screenDims[1]/2)
     message_display(totalMessage, screenDims[0]/2, screenDims[1]/2 + 100)
@@ -80,7 +82,7 @@ for i in range(10):
     numbers = (random.randint(0, 12), random.randint(0, 12))
     answer = numbers[0] * numbers[1]
     teststring = ('What is %d times %d?' % numbers)
-    display_messages()
+    display_messages(colour)
 
     while submitted == False:
         for event in pygame.event.get():
@@ -94,7 +96,7 @@ for i in range(10):
                 if keytype in controls:
                     keyans = controls[keytype]
                     playerans += str(keyans)
-                    display_messages() 
+                    display_messages(colour) 
                 if event.key == pygame.K_SPACE:
                     submitted = True
                     try:
@@ -107,14 +109,16 @@ for i in range(10):
                         print ('Enter a number')
 
     totalMessage = ('You got %d out of %d' % (total, i+1))
-    display_messages()
+
+    if correctness:
+        colour = GREEN
+        display_messages(colour)
+        correct()
+    else:
+        colour = RED
+        display_messages(colour) 
+        incorrect()
     if i == 9:
         screen.fill(BLACK)
         message_display(('Game Over'), screenDims[0]/2, screenDims[1]/2 - 50)
         message_display('You got %d out of %d' % (total, i+1), screenDims[0]/2, screenDims[1]/2 + 50)
-    if correctness:
-        correct()
-    else:
-        incorrect()
-
-```
